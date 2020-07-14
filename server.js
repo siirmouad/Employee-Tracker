@@ -277,13 +277,7 @@ function updateRole() {
       .then(function (answer) {
         console.log(answer);
         const name = answer.employeeName;
-        /*const role = answer.roleName;
-        connection.query('SELECT * FROM role', function(err, res) {
-            if (err) throw (err);
-            let filteredRole = res.filter(function(res) {
-                return res.title == role;
-            })
-        let roleId = filteredRole[0].id;*/
+
         connection.query("SELECT * FROM role", function (err, res) {
           inquirer
             .prompt([
