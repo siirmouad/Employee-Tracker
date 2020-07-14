@@ -21,6 +21,7 @@ connection.connect(function (err) {
   start();
 });
 
+// creating a function with prompt option 
 function start() {
   inquirer
     .prompt({
@@ -38,6 +39,7 @@ function start() {
         "Exit",
       ],
     })
+  //else if statements to direct the user to the function necessary 
     .then(function (answer) {
       if (answer.action === "View all departments") {
         viewDepartments();
@@ -59,6 +61,8 @@ function start() {
     });
 }
 
+//Create a function to grab all from department in mySQL
+
 function viewDepartments() {
   var query = "SELECT * FROM department";
   connection.query(query, function (err, res) {
@@ -70,11 +74,14 @@ function viewDepartments() {
   });
 }
 
+//Create a function to grab all the roles from role in mySQL
+
 function viewRoles() {
   var query = "SELECT * FROM role";
   connection.query(query, function (err, res) {
     console.log(`ROLES:`);
     res.forEach((role) => {
+      //console log the results by ID,TITLE,SALARY AND DEPARTMENT ID
       console.log(
         `ID: ${role.id} | Title: ${role.title} | Salary: ${role.salary} | Department ID: ${role.department_id}`
       );
@@ -83,12 +90,14 @@ function viewRoles() {
   });
 }
 
+//Create a function to grab all the employees from employee data in mySQL
 function viewEmployees() {
   var query = "SELECT * FROM employee";
   connection.query(query, function (err, res) {
     console.log(`EMPLOYEES:`);
     res.forEach((employee) => {
       console.log(
+        //console log the results by ID,NAME, EMPLOEE FIRST AND LAST NAME, ROLE ID, MANAGER ID
         `ID: ${employee.id} | Name: ${employee.first_name} ${employee.last_name} | Role ID: ${employee.role_id} | Manager ID: ${employee.manager_id}`
       );
     });
@@ -96,6 +105,7 @@ function viewEmployees() {
   });
 }
 
+//Create function to add a department to the data base by answering name of the department 
 function addDepartment() {
   inquirer
     .prompt({
@@ -104,20 +114,30 @@ function addDepartment() {
       message: "What is the name of the new department?",
     })
     .then(function (answer) {
+    
+    //INSERT THE ANSWER INTO THE DEPARTMENT DB
+    
       var query = "INSERT INTO department (name) VALUES ( ? )";
       connection.query(query, answer.department, function (err, res) {
         console.log(
+          //CONSOLE LOG THE MESSAGE WITH THE ANSWER IN UPPERCASES
           `You have added this department: ${answer.department.toUpperCase()}.`
         );
       });
+    
+   
       viewDepartments();
     });
 }
 
+
+//CREATING A FUNCTION TO ADD A ROLE TO A DEPARTMENT 
 function addRole() {
   connection.query("SELECT * FROM department", function (err, res) {
     if (err) throw err;
     inquirer
+    
+    //QUESTIONS TO BE ANSWERED BY USERS
       .prompt([
         {
           name: "title",
@@ -132,7 +152,7 @@ function addRole() {
         {
           name: "departmentName",
           type: "list",
-          // is there a way to make the options here the results of a query that selects all departments?`
+          
           message: "Which department does this role fall under?",
           choices: function () {
             var choicesArray = [];
@@ -143,7 +163,7 @@ function addRole() {
           },
         },
       ])
-      // in order to get the id here, i need a way to grab it from the departments table
+      
       .then(function (answer) {
         const department = answer.departmentName;
         connection.query("SELECT * FROM DEPARTMENT", function (err, res) {
@@ -185,7 +205,7 @@ async function addEmployee() {
         {
           name: "roleName",
           type: "list",
-          // is there a way to make the options here the results of a query that selects all departments?`
+          
           message: "What role does the employee have?",
           choices: function () {
             rolesArray = [];
@@ -196,7 +216,7 @@ async function addEmployee() {
           },
         },
       ])
-      // in order to get the id here, i need a way to grab it from the departments table
+      
       .then(function (answer) {
         console.log(answer);
         const role = answer.roleName;
